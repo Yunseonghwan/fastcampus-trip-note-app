@@ -1,52 +1,56 @@
+import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { theme } from "@/constants/theme";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const CreateTripScreen = () => {
   return (
-    <SafeAreaView edges={["bottom"]} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Input label="제목" />
-        <View>
-          <Text style={styles.label}>여행 기간</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+    >
+      <SafeAreaView edges={["bottom"]} style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <Input label="제목" />
           <View>
-            <View style={styles.dateContainer}>
-              <Text>시작일</Text>
-              <DateTimePicker
-                value={new Date()}
-                mode="date"
-                display="default"
-                locale="ko-KR"
-              />
-            </View>
-            <View style={[styles.dateContainer, { marginTop: 12 }]}>
-              <Text>종료일</Text>
-              <DateTimePicker
-                value={new Date()}
-                mode="date"
-                display="default"
-                locale="ko-KR"
-              />
+            <Text style={styles.label}>여행 기간</Text>
+            <View>
+              <View style={styles.dateContainer}>
+                <Text>시작일</Text>
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  locale="ko-KR"
+                />
+              </View>
+              <View style={[styles.dateContainer, { marginTop: 12 }]}>
+                <Text>종료일</Text>
+                <DateTimePicker
+                  value={new Date()}
+                  mode="date"
+                  display="default"
+                  locale="ko-KR"
+                />
+              </View>
             </View>
           </View>
-        </View>
-        <View style={styles.buttonContainer}>
-          <Pressable style={styles.button}>
-            <Text
-              style={{
-                color: theme.colors.white,
-                fontSize: 18,
-                fontFamily: theme.fonts.semibold,
-              }}
-            >
-              여행 생성하기
-            </Text>
-          </Pressable>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+          <View style={styles.buttonContainer}>
+            <Button label="여행 생성하기" />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -72,13 +76,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: "auto",
-  },
-  button: {
-    width: "100%",
-    height: 52,
-    backgroundColor: theme.colors.primary,
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 
