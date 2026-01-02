@@ -2,21 +2,17 @@ import PlusButton from "@/components/PlusButton";
 import TripCard from "@/components/TripCard";
 import { theme } from "@/constants/theme";
 import { useGetTripList } from "@/hooks/useTrip";
-import { storageService } from "@/services/storageService";
-import { ResponseTripListType } from "@/types/tripType";
+import { useTripStore } from "@/store/tripStore";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const CACHE_KEY = "tripListCache";
-const CACHE_EXPIRY_KEY = "tripCacheExpiry";
-const CACHE_DURATION = 1000 * 50 * 60;
-
 const MyTripList = () => {
   const router = useRouter();
-  const [cacheData, setCacheData] = useState<ResponseTripListType | null>(null);
-  console.log(cacheData);
+  const { cachedTrips } = useTripStore((state) => state);
+  const { setCachedTrips } = useTripStore((state) => state.actions);
+
   const {
     data: trips,
     hasNextPage,
@@ -24,38 +20,11 @@ const MyTripList = () => {
     isFetchingNextPage,
   } = useGetTripList();
 
-  const saveToCache = useCallback(async (data: ResponseTripListType) => {
-    await Promise.all([
-      storageService.setItem(CACHE_KEY, JSON.stringify(data)),
-      storageService.setItem(
-        CACHE_EXPIRY_KEY,
-        JSON.stringify(Date.now() + CACHE_DURATION)
-      ),
-    ]);
-  }, []);
-
   useEffect(() => {
     if (trips?.pages[0]) {
-      saveToCache(trips.pages[0]);
+      setCachedTrips(trips.pages[0]);
     }
-  }, [trips, saveToCache]);
-
-  const loadFromCache = useCallback(async () => {
-    const [cached, expiry] = await Promise.all([
-      storageService.getItem(CACHE_KEY),
-      storageService.getItem(CACHE_EXPIRY_KEY),
-    ]);
-    if (cached && expiry) {
-      const isExpired = Date.now() > expiry;
-      if (!isExpired) {
-        setCacheData(cached);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    loadFromCache();
-  }, [loadFromCache]);
+  }, [trips, setCachedTrips]);
 
   const combinedTrips = useMemo(() => {
     if (trips?.pages.length) {
@@ -66,11 +35,11 @@ const MyTripList = () => {
         meta,
       };
     }
-    if (cacheData) {
-      return { data: cacheData.data, meta: cacheData.meta };
+    if (cachedTrips) {
+      return { data: cachedTrips.data, meta: cachedTrips.meta };
     }
     return { data: [], meta: undefined };
-  }, [trips, cacheData]);
+  }, [trips, cachedTrips]);
 
   const handleLoadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
