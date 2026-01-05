@@ -1,10 +1,11 @@
+import Modal from "@/components/Modal";
 import PlusButton from "@/components/PlusButton";
 import TripCard from "@/components/TripCard";
 import { theme } from "@/constants/theme";
 import { useGetTripList } from "@/hooks/useTrip";
 import { useTripStore } from "@/store/tripStore";
 import { useRouter } from "expo-router";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -12,6 +13,31 @@ const MyTripList = () => {
   const router = useRouter();
   const { cachedTrips } = useTripStore((state) => state);
   const { setCachedTrips } = useTripStore((state) => state.actions);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const handleOpenModal = (id: string) => {
+    setIsOpen(true);
+    setSelectedId(id);
+  };
+
+  const handleClosedModal = () => {
+    setIsOpen(false);
+    setSelectedId(null);
+  };
+
+  const updateTrip = (tripId: string) => {
+    router.navigate({
+      pathname: "/updateTrip",
+      params: {
+        tripId,
+      },
+    });
+  };
+
+  const removeTrip = (tripId: string) => {
+    console.log(tripId);
+  };
 
   const {
     data: trips,
@@ -60,6 +86,7 @@ const MyTripList = () => {
             title={item.title}
             startDate={item.startDate}
             endDate={item.endDate}
+            handleOpenModal={handleOpenModal}
           />
         )}
         ListEmptyComponent={() => (
@@ -77,6 +104,13 @@ const MyTripList = () => {
       <View style={styles.buttonContainer}>
         <PlusButton onPress={() => router.navigate("/createTrip")} />
       </View>
+      <Modal
+        selectedId={selectedId}
+        isOpen={isOpen}
+        closeModal={handleClosedModal}
+        updateTrip={updateTrip}
+        removeTrip={removeTrip}
+      />
     </SafeAreaView>
   );
 };
