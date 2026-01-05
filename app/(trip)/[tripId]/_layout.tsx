@@ -1,14 +1,16 @@
+import { useTripTitleStore } from "@/store/useTripTitleStore";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { router, Stack } from "expo-router";
 import { Pressable } from "react-native";
 
 const TripDetailLayout = () => {
+  const { title } = useTripTitleStore((state) => state);
   return (
     <Stack>
       <Stack.Screen
         name="index"
         options={{
-          title: "여행 상세",
+          title: title,
           headerLeft: () => (
             <Pressable onPress={() => router.back()}>
               <MaterialIcons
@@ -23,7 +25,7 @@ const TripDetailLayout = () => {
       <Stack.Screen
         name="createTripDetail/index"
         options={{
-          title: "여행 상세 생성",
+          title: `${title} 생성`,
           headerLeft: () => (
             <Pressable onPress={() => router.back()}>
               <MaterialIcons
@@ -38,7 +40,7 @@ const TripDetailLayout = () => {
       <Stack.Screen
         name="updateTripDetail/index"
         options={{
-          title: "여행 상세 수정",
+          title: `${title} 수정`,
           headerLeft: () => (
             <Pressable onPress={() => router.back()}>
               <MaterialIcons
@@ -53,7 +55,7 @@ const TripDetailLayout = () => {
       <Stack.Screen
         name="[tripDetailId]/index"
         options={{
-          title: "여행 상세 보기",
+          title: title,
           headerLeft: () => (
             <Pressable onPress={() => router.back()}>
               <MaterialIcons
@@ -68,7 +70,7 @@ const TripDetailLayout = () => {
       <Stack.Screen
         name="expenses/index"
         options={{
-          title: "여행 경비",
+          title: `${title} 여행 경비`,
           headerLeft: () => (
             <Pressable onPress={() => router.back()}>
               <MaterialIcons
@@ -83,7 +85,7 @@ const TripDetailLayout = () => {
       <Stack.Screen
         name="expenses/createExpenses/index"
         options={{
-          title: "경비 생성",
+          title: `${title} 경비 생성`,
           headerLeft: () => (
             <Pressable onPress={() => router.back()}>
               <MaterialIcons
@@ -98,7 +100,7 @@ const TripDetailLayout = () => {
       <Stack.Screen
         name="expenses/updateExpenses/index"
         options={{
-          title: "경비 수정",
+          title: `${title} 경비 수정`,
           headerLeft: () => (
             <Pressable onPress={() => router.back()}>
               <MaterialIcons
