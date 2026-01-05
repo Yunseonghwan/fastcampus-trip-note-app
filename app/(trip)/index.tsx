@@ -33,6 +33,7 @@ const MyTripList = () => {
         tripId,
       },
     });
+    handleClosedModal();
   };
 
   const removeTrip = (tripId: string) => {
