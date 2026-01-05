@@ -1,21 +1,23 @@
 import { theme } from "@/constants/theme";
+import { TripDetailItemType } from "@/types/tripDetailType";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Image } from "expo-image";
 import { memo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface TripDetailCardProps {
+  item: TripDetailItemType;
   handleModal: () => void;
 }
 
-const TripDetailCard = ({ handleModal }: TripDetailCardProps) => {
+const TripDetailCard = ({ handleModal, item }: TripDetailCardProps) => {
   return (
     <Pressable>
       <Image contentFit="cover" source={{ uri: "" }} style={styles.image} />
       <View style={styles.container}>
         <View style={{ gap: 5 }}>
-          <Text style={styles.title}>제목</Text>
-          <Text style={styles.date}>날짜</Text>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.date}>{String(item.createdAt)}</Text>
         </View>
         <Pressable onPress={handleModal}>
           <AntDesign name="more" size={24} color="black" />
