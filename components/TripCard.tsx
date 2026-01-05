@@ -26,7 +26,7 @@ const TripCard = ({
     <Pressable
       style={styles.container}
       onPress={() => {
-        router.navigate(`/(trips)/${id}`);
+        router.navigate(`/${id}`);
         setTitle(title);
       }}
     >
