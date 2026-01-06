@@ -1,3 +1,4 @@
+import * as ImagePicker from "expo-image-picker";
 import { MetaType } from "./commonType";
 
 export interface TripDetailItemType {
@@ -10,4 +11,12 @@ export interface TripDetailItemType {
 export interface ResponseTripDetailList {
   data: TripDetailItemType[];
   meta: MetaType;
+}
+
+export interface RequestCreateTripDetailType {
+  tripId: string;
+  title: string;
+  content: string;
+  weather: string;
+  image: ImagePicker.ImagePickerAsset;
 }

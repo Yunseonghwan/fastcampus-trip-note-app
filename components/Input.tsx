@@ -12,12 +12,12 @@ interface InputProps extends TextInputProps {
   label: string;
 }
 
-const Input = ({ label, editable, ...props }: InputProps) => {
+const Input = ({ label, editable, style, ...props }: InputProps) => {
   return (
     <View style={styles.inputContainer}>
       <Text style={styles.inputLabel}>{label}</Text>
       <TextInput
-        style={[styles.input, editable === false && styles.editAble]}
+        style={[styles.input, editable === false && styles.editAble, style]}
         {...props}
         autoCapitalize="none"
         autoComplete="off"

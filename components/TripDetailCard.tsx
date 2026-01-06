@@ -13,7 +13,11 @@ interface TripDetailCardProps {
 const TripDetailCard = ({ handleModal, item }: TripDetailCardProps) => {
   return (
     <Pressable>
-      <Image contentFit="cover" source={{ uri: "" }} style={styles.image} />
+      <Image
+        contentFit="cover"
+        source={{ uri: item.image }}
+        style={styles.image}
+      />
       <View style={styles.container}>
         <View style={{ gap: 5 }}>
           <Text style={styles.title}>{item.title}</Text>
