@@ -1,7 +1,9 @@
 import { api } from "@/api";
 import {
   RequestCreateTripDetailType,
+  RequestUpdateTripDetailType,
   ResponseTripDetailList,
+  TripDetailItemType,
 } from "@/types/tripDetailType";
 import {
   useInfiniteQuery,
@@ -9,6 +11,7 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  UseQueryResult,
 } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -99,6 +102,57 @@ export const useDeleteTripDetail = () => {
       queryClient.invalidateQueries({
         queryKey: ["trip-item-list"],
       });
+    },
+  });
+};
+
+export const useGetTripDetail = (
+  tripDetailId: string
+): UseQueryResult<TripDetailItemType> => {
+  return useQuery({
+    queryKey: ["trip-detail", tripDetailId],
+    queryFn: async () => {
+      const res = await api.get(`/trip-items/${tripDetailId}`);
+      return res.data;
+    },
+  });
+};
+
+export const useUpdateTripDetail = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (body: RequestUpdateTripDetailType) => {
+      const formData = new FormData();
+
+      formData.append("title", body.title);
+      formData.append("content", body.content);
+      formData.append("weather", body.weather);
+
+      if (body.image) {
+        const filename = body.image.fileName ?? "image.jpg";
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : "image/jpeg";
+
+        formData.append("image", {
+          uri: body.image.uri,
+          name: filename,
+          type,
+        } as unknown as Blob);
+      }
+
+      const res = await api.patch(
+        `/trip-items/${body.tripDetailId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["trip-item-list"] });
     },
   });
 };

@@ -5,6 +5,8 @@ export interface TripDetailItemType {
   id: string;
   title: string;
   image: string;
+  content: string;
+  weather: string;
   createdAt: string | Date;
 }
 
@@ -15,6 +17,14 @@ export interface ResponseTripDetailList {
 
 export interface RequestCreateTripDetailType {
   tripId: string;
+  title: string;
+  content: string;
+  weather: string;
+  image: ImagePicker.ImagePickerAsset;
+}
+
+export interface RequestUpdateTripDetailType {
+  tripDetailId: string;
   title: string;
   content: string;
   weather: string;
