@@ -1,5 +1,5 @@
 import { theme } from "@/constants/theme";
-import { useTripTitleStore } from "@/store/useTripTitleStore";
+import { useTripInfoStore } from "@/store/useTripInfoStore";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRouter } from "expo-router";
 import { memo } from "react";
@@ -21,13 +21,13 @@ const TripCard = ({
   handleOpenModal,
 }: TripCardProps) => {
   const router = useRouter();
-  const { setTitle } = useTripTitleStore((state) => state.action);
+  const { setTripInfo } = useTripInfoStore((state) => state.action);
   return (
     <Pressable
       style={styles.container}
       onPress={() => {
         router.navigate(`/${id}`);
-        setTitle(title);
+        setTripInfo(id, title);
       }}
     >
       <View style={{ gap: 5 }}>
