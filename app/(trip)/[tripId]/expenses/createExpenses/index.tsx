@@ -1,6 +1,9 @@
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { theme } from "@/constants/theme";
+import { useCreateExpenses } from "@/hooks/useExpenses";
+import { ExpensesCategoryType } from "@/types/expensesType";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -13,8 +16,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-type ExpensesCategoryType = "FOOD" | "TRANSPORT" | "LODGING" | "ACTIVITY";
-
 const EXPENSE_CATEGORIES: ExpensesCategoryType[] = [
   "FOOD",
   "ACTIVITY",
@@ -23,11 +24,31 @@ const EXPENSE_CATEGORIES: ExpensesCategoryType[] = [
 ];
 
 const CreateExpensesScreen = () => {
+  const { tripId } = useLocalSearchParams();
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] =
     useState<ExpensesCategoryType>("FOOD");
 
   const [amount, setAmount] = useState("");
   const [memo, setMemo] = useState("");
+
+  const { mutateAsync } = useCreateExpenses();
+
+  const createExpense = () => {
+    mutateAsync(
+      {
+        tripId: tripId as string,
+        amount: Number(amount),
+        memo: memo,
+        category: selectedCategory,
+      },
+      {
+        onSuccess: () => {
+          router.back();
+        },
+      }
+    );
+  };
 
   const handleCategorySelect = (category: ExpensesCategoryType) => {
     setSelectedCategory(category);
@@ -91,7 +112,7 @@ const CreateExpensesScreen = () => {
             onChangeText={(text) => setMemo(text)}
           />
           <View style={styles.buttonContainer}>
-            <Button label="저장" onPress={() => {}} />
+            <Button label="저장" onPress={createExpense} />
           </View>
         </ScrollView>
       </SafeAreaView>
