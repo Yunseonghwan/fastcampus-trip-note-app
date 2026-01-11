@@ -87,3 +87,18 @@ export const useCreateTripDetail = () => {
     },
   });
 };
+
+export const useDeleteTripDetail = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (tripDetailId: string) => {
+      const res = await api.delete(`/trip-items/${tripDetailId}`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["trip-item-list"],
+      });
+    },
+  });
+};
