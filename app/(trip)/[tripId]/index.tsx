@@ -1,5 +1,6 @@
 import PlusButton from "@/components/PlusButton";
 import TripDetailCard from "@/components/TripDetailCard";
+import TripDetailListItemSkeleton from "@/components/TripDetailListItemSkeleton";
 import { theme } from "@/constants/theme";
 import { useGetTripDetailList } from "@/hooks/useTripDetail";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -14,6 +15,7 @@ const TripDetailListScreen = () => {
 
   const {
     data: tripDetailList,
+    isPending,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
@@ -33,6 +35,18 @@ const TripDetailListScreen = () => {
       fetchNextPage();
     }
   };
+
+  if (isPending) {
+    return (
+      <SafeAreaView edges={["bottom"]} style={styles.container}>
+        <View style={{ gap: 10 }}>
+          {[1, 2, 3].map((item) => (
+            <TripDetailListItemSkeleton key={item} />
+          ))}
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView edges={["bottom"]} style={styles.container}>
