@@ -1,10 +1,11 @@
 import ExpenseItem from "@/components/ExpenseItem";
 import ExpensesHeader from "@/components/ExpensesHeader";
+import Modal from "@/components/Modal";
 import PlusButton from "@/components/PlusButton";
 import { theme } from "@/constants/theme";
-import { useGetExpenses } from "@/hooks/useExpenses";
+import { useDeleteExpenses, useGetExpenses } from "@/hooks/useExpenses";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -17,6 +18,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const ExpensesListScreen = () => {
   const { tripId } = useLocalSearchParams();
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedExpenseId, setSelectedExpenseId] = useState<string | null>(
+    null
+  );
+
+  const { mutateAsync: deleteExpense } = useDeleteExpenses();
 
   const {
     data: expenses,
@@ -42,6 +49,32 @@ const ExpensesListScreen = () => {
     }
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedExpenseId(null);
+  };
+
+  const handleDeleteExpense = (expenseId: string) => {
+    deleteExpense(expenseId, {
+      onSuccess: () => {
+        handleCloseModal();
+      },
+    });
+  };
+
+  const handleModal = (expenseId: string) => {
+    setIsModalOpen(true);
+    setSelectedExpenseId(expenseId);
+  };
+
+  const handleEditExpense = (expenseId: string) => {
+    router.navigate({
+      pathname: "/(trip)/[tripId]/expenses/updateExpenses",
+      params: { tripId: tripId as string, expenseId },
+    });
+    handleCloseModal();
+  };
+
   return (
     <SafeAreaView edges={["bottom"]} style={styles.container}>
       <FlatList
@@ -51,7 +84,9 @@ const ExpensesListScreen = () => {
         ListHeaderComponent={() => (
           <ExpensesHeader totalAmount={combinedExpenses.totalAmount} />
         )}
-        renderItem={({ item }) => <ExpenseItem item={item} />}
+        renderItem={({ item }) => (
+          <ExpenseItem item={item} handleModal={handleModal} />
+        )}
         ListEmptyComponent={() => (
           <Text
             style={{
@@ -82,6 +117,13 @@ const ExpensesListScreen = () => {
           }}
         />
       </View>
+      <Modal
+        isOpen={isModalOpen}
+        selectedId={selectedExpenseId}
+        updateTrip={handleEditExpense}
+        removeTrip={handleDeleteExpense}
+        closeModal={handleCloseModal}
+      />
     </SafeAreaView>
   );
 };

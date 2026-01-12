@@ -9,9 +9,10 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface ExpenseItemProps {
   item: ExpensesItemType;
+  handleModal: (id: string) => void;
 }
 
-const ExpenseItem = ({ item }: ExpenseItemProps) => {
+const ExpenseItem = ({ item, handleModal }: ExpenseItemProps) => {
   const getCategoryIcon = (category: ExpensesCategoryType) => {
     switch (category) {
       case "FOOD":
@@ -70,7 +71,7 @@ const ExpenseItem = ({ item }: ExpenseItemProps) => {
           </Text>
         </View>
       </View>
-      <Pressable>
+      <Pressable onPress={() => handleModal(item.id)}>
         <AntDesign name="more" size={24} color="black" />
       </Pressable>
     </View>
