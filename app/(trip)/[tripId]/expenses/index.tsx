@@ -1,3 +1,5 @@
+import ExpenseItem from "@/components/ExpenseItem";
+import ExpensesHeader from "@/components/ExpensesHeader";
 import PlusButton from "@/components/PlusButton";
 import { theme } from "@/constants/theme";
 import { useGetExpenses } from "@/hooks/useExpenses";
@@ -26,7 +28,7 @@ const ExpensesListScreen = () => {
   const combinedExpenses = useMemo(() => {
     const data = expenses?.pages.flatMap((page) => page.data);
     const meta = expenses?.pages[0]?.meta;
-    const totalAmount = expenses?.totalAmount;
+    const totalAmount = expenses?.pages[0].totalAmount;
     return {
       data: data ?? [],
       meta: meta ?? undefined,
@@ -46,8 +48,10 @@ const ExpensesListScreen = () => {
         data={combinedExpenses.data ?? []}
         contentContainerStyle={{ gap: 20 }}
         keyExtractor={(item) => item.id}
-        ListHeaderComponent={() => <></>}
-        renderItem={({ item }) => <></>}
+        ListHeaderComponent={() => (
+          <ExpensesHeader totalAmount={combinedExpenses.totalAmount} />
+        )}
+        renderItem={({ item }) => <ExpenseItem item={item} />}
         ListEmptyComponent={() => (
           <Text
             style={{
