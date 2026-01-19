@@ -92,6 +92,12 @@ const TripDetailListScreen = () => {
               setSelectedId(item.id);
               setIsOpen(true);
             }}
+            goDetail={() => {
+              router.navigate({
+                pathname: "/(trip)/[tripId]/[tripDetailId]",
+                params: { tripId: tripId as string, tripDetailId: item.id },
+              });
+            }}
           />
         )}
         ListEmptyComponent={() => (

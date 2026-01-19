@@ -8,11 +8,16 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 interface TripDetailCardProps {
   item: TripDetailItemType;
   handleModal: () => void;
+  goDetail: () => void;
 }
 
-const TripDetailCard = ({ handleModal, item }: TripDetailCardProps) => {
+const TripDetailCard = ({
+  goDetail,
+  handleModal,
+  item,
+}: TripDetailCardProps) => {
   return (
-    <Pressable>
+    <Pressable onPress={goDetail}>
       <Image
         contentFit="cover"
         source={{ uri: item.image }}
