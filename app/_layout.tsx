@@ -5,6 +5,10 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import "react-native-reanimated";
 
+if (__DEV__) {
+  require("./ReactotronConfig");
+}
+
 SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
