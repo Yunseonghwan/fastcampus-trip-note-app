@@ -1,9 +1,12 @@
 import { theme } from "@/constants/theme";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { memo } from "react";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
+import { memo, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -25,6 +28,10 @@ interface TripFormProps {
   onPress: () => void;
 }
 
+const formatDate = (date: Date) => {
+  return `${date.getFullYear()}. ${date.getMonth() + 1}. ${date.getDate()}.`;
+};
+
 const TripForm = ({
   id,
   title,
@@ -35,6 +42,36 @@ const TripForm = ({
   setEndDate,
   onPress,
 }: TripFormProps) => {
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+
+  const handleStartDateChange = (
+    event: DateTimePickerEvent,
+    date?: Date,
+  ) => {
+    if (Platform.OS === "android") {
+      setShowStartPicker(false);
+    }
+    if (event.type === "set" && date) {
+      setStartDate(date);
+      if (endDate && date > endDate) {
+        setEndDate(date);
+      }
+    }
+  };
+
+  const handleEndDateChange = (
+    event: DateTimePickerEvent,
+    date?: Date,
+  ) => {
+    if (Platform.OS === "android") {
+      setShowEndPicker(false);
+    }
+    if (event.type === "set" && date) {
+      setEndDate(date);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -49,24 +86,63 @@ const TripForm = ({
             <View>
               <View style={styles.dateContainer}>
                 <Text>시작일</Text>
-                <DateTimePicker
-                  value={startDate ?? new Date()}
-                  mode="date"
-                  display="default"
-                  locale="ko-KR"
-                  onChange={(_, date) => setStartDate(date)}
-                />
+                {Platform.OS === "android" ? (
+                  <Pressable
+                    onPress={() => setShowStartPicker(true)}
+                    style={styles.dateButton}
+                  >
+                    <Text style={styles.dateText}>
+                      {formatDate(startDate ?? new Date())}
+                    </Text>
+                  </Pressable>
+                ) : (
+                  <DateTimePicker
+                    value={startDate ?? new Date()}
+                    mode="date"
+                    display="default"
+                    locale="ko-KR"
+                    onChange={handleStartDateChange}
+                  />
+                )}
+                {Platform.OS === "android" && showStartPicker && (
+                  <DateTimePicker
+                    value={startDate ?? new Date()}
+                    mode="date"
+                    display="default"
+                    onChange={handleStartDateChange}
+                  />
+                )}
               </View>
               <View style={[styles.dateContainer, { marginTop: 12 }]}>
                 <Text>종료일</Text>
-                <DateTimePicker
-                  value={endDate ?? new Date()}
-                  mode="date"
-                  display="default"
-                  locale="ko-KR"
-                  onChange={(_, date) => setEndDate(date)}
-                  minimumDate={startDate}
-                />
+                {Platform.OS === "android" ? (
+                  <Pressable
+                    onPress={() => setShowEndPicker(true)}
+                    style={styles.dateButton}
+                  >
+                    <Text style={styles.dateText}>
+                      {formatDate(endDate ?? new Date())}
+                    </Text>
+                  </Pressable>
+                ) : (
+                  <DateTimePicker
+                    value={endDate ?? new Date()}
+                    mode="date"
+                    display="default"
+                    locale="ko-KR"
+                    onChange={handleEndDateChange}
+                    minimumDate={startDate}
+                  />
+                )}
+                {Platform.OS === "android" && showEndPicker && (
+                  <DateTimePicker
+                    value={endDate ?? new Date()}
+                    mode="date"
+                    display="default"
+                    onChange={handleEndDateChange}
+                    minimumDate={startDate}
+                  />
+                )}
               </View>
             </View>
           </View>
@@ -98,6 +174,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  dateButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    backgroundColor: "#f0f0f0",
+  },
+  dateText: {
+    fontSize: 16,
+    fontFamily: theme.fonts.regular,
+    color: "#333",
   },
   buttonContainer: {
     marginTop: "auto",
